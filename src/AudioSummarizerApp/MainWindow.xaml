@@ -14,131 +14,193 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <!-- Encabezado -->
         <Border Grid.Row="0" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="16">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="Aurora Recorder" FontSize="22" FontWeight="Bold" />
-                    <TextBlock Text="Grabación multi-fuente con transcripción y minutas automáticas" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                    <TextBlock Text="Grabación multi-fuente con transcripción y minutas automáticas"
+                               FontSize="12"
+                               Foreground="{StaticResource TextSecondaryBrush}" />
                 </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
-                    <Button Content="Actualizar dispositivos" Command="{Binding RefreshDevicesCommand}" />
-                    <Button Content="{Binding RecordButtonText}" Command="{Binding ToggleRecordingCommand}" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="Actualizar dispositivos"
+                            Command="{Binding RefreshDevicesCommand}"
+                            Margin="0,0,8,0" />
+                    <Button Content="{Binding RecordButtonText}"
+                            Command="{Binding ToggleRecordingCommand}"
+                            Margin="0,0,8,0"/>
                 </StackPanel>
             </Grid>
         </Border>
 
+        <!-- Cuerpo -->
         <TabControl Grid.Row="1" Margin="0,16,0,16">
+            <!-- TAB: Grabación -->
             <TabItem Header="Grabación">
-                <Grid Background="{StaticResource CardBrush}" Margin="0" Padding="16" CornerRadius="8">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="16" Margin="0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
-                        <TextBlock Text="Estado:" FontWeight="SemiBold" />
-                        <TextBlock Text="{Binding RecordingStatus}" />
-                        <TextBlock Text="Destino:" FontWeight="SemiBold" Margin="32,0,0,0" />
-                        <TextBlock Text="{Binding OutputFolder}" TextTrimming="CharacterEllipsis" Width="320" />
-                        <Button Content="Cambiar carpeta" Command="{Binding BrowseOutputFolderCommand}" />
-                    </StackPanel>
-
-                    <ScrollViewer Grid.Row="1" Margin="0,16,0,16">
-                        <ItemsControl ItemsSource="{Binding Devices}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="{StaticResource BackgroundBrush}" CornerRadius="6" Padding="12" Margin="0,0,0,10">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="2*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" />
-                                                <TextBlock Text="{Binding Description}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" />
-                                            </StackPanel>
-                                            <CheckBox Grid.Column="1" Content="Usar" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="16,0" />
-                                            <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Center">
-                                                <TextBlock Text="Ganancia" />
-                                                <Slider Minimum="0" Maximum="2" Value="{Binding Volume, Mode=TwoWay}" TickFrequency="0.1" IsSnapToTickEnabled="True" />
-                                            </StackPanel>
-                                            <ToggleButton Grid.Column="3" Content="Solo" IsChecked="{Binding IsSolo, Mode=TwoWay}" VerticalAlignment="Center" />
-                                            <ToggleButton Grid.Column="4" Content="Mute" IsChecked="{Binding IsMuted, Mode=TwoWay}" VerticalAlignment="Center" />
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-
-                    <StackPanel Grid.Row="2">
-                        <TextBlock Text="Transcripción" FontWeight="SemiBold" />
-                        <TextBox Text="{Binding LastTranscription}" IsReadOnly="True" TextWrapping="Wrap" Height="100" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
-                        <TextBlock Text="Minuta" FontWeight="SemiBold" Margin="0,12,0,0" />
-                        <TextBox Text="{Binding LastSummary}" IsReadOnly="True" TextWrapping="Wrap" Height="100" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
-                    </StackPanel>
-                </Grid>
-            </TabItem>
-
-            <TabItem Header="Configuración">
-                <ScrollViewer Background="{StaticResource CardBrush}" Padding="16">
-                    <StackPanel>
-                        <TextBlock Text="API de transcripción" FontWeight="SemiBold" FontSize="14" />
-                        <UniformGrid Columns="2" Margin="0,8,0,16" Rows="4">
-                            <Label Content="API Key Whisper" />
-                            <PasswordBox helpers:PasswordBoxAssistant.BindPassword="True"
-                                         helpers:PasswordBoxAssistant.BoundPassword="{Binding WhisperApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Label Content="Modelo" />
-                            <TextBox Text="{Binding WhisperModel, Mode=TwoWay}" />
-                            <Label Content="URL Base" />
-                            <TextBox Text="{Binding WhisperBaseUrl, Mode=TwoWay}" />
-                            <Label Content="Idioma (ISO)" />
-                            <TextBox Text="{Binding WhisperLanguage, Mode=TwoWay}" />
-                        </UniformGrid>
-
-                        <TextBlock Text="Proveedor de resumen" FontWeight="SemiBold" FontSize="14" />
-                        <StackPanel Orientation="Vertical" Margin="0,8,0,16">
-                            <ComboBox ItemsSource="{Binding AvailableSummaryProviders}" SelectedItem="{Binding SelectedSummaryProvider}" />
-                            <Label Content="API Key OpenAI" />
-                            <PasswordBox helpers:PasswordBoxAssistant.BindPassword="True"
-                                         helpers:PasswordBoxAssistant.BoundPassword="{Binding OpenAiApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Label Content="API Key Gemini" />
-                            <PasswordBox helpers:PasswordBoxAssistant.BindPassword="True"
-                                         helpers:PasswordBoxAssistant.BoundPassword="{Binding GeminiApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Label Content="Prompt base para minutas" />
-                            <TextBox Text="{Binding SummaryPromptTemplate, Mode=TwoWay}" AcceptsReturn="True" Height="120" TextWrapping="Wrap" />
+                        <!-- Barra superior de estado -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                            <TextBlock Text="Estado:" FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding RecordingStatus}" Margin="8,0,0,0"/>
+                            <TextBlock Text="Destino:" FontWeight="SemiBold" Margin="32,0,0,0" />
+                            <TextBlock Text="{Binding OutputFolder}" TextTrimming="CharacterEllipsis" Width="320" Margin="8,0,0,0"/>
+                            <Button Content="Cambiar carpeta" Command="{Binding BrowseOutputFolderCommand}" Margin="8,0,0,0"/>
                         </StackPanel>
 
-                        <TextBlock Text="Google Drive" FontWeight="SemiBold" FontSize="14" />
-                        <UniformGrid Columns="2" Margin="0,8,0,16" Rows="2">
-                            <Label Content="Credenciales (client_secret.json)" />
-                            <TextBox Text="{Binding GoogleCredentialsPath, Mode=TwoWay}" />
-                            <Label Content="ID carpeta destino" />
-                            <TextBox Text="{Binding GoogleDriveFolderId, Mode=TwoWay}" />
-                        </UniformGrid>
+                        <!-- Lista de dispositivos -->
+                        <ScrollViewer Grid.Row="1" Margin="0,16,0,16">
+                            <ItemsControl ItemsSource="{Binding Devices}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource BackgroundBrush}" CornerRadius="6" Padding="12" Margin="0,0,0,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="2*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Hotkeys" FontWeight="SemiBold" FontSize="14" />
-                        <UniformGrid Columns="2" Margin="0,8,0,16" Rows="2">
-                            <Label Content="Iniciar / detener" />
-                            <TextBox Text="{Binding HotkeyText, Mode=TwoWay}" />
-                            <Label Content="Escuchar en segundo plano" />
-                            <CheckBox IsChecked="{Binding RunOnStartup, Mode=TwoWay}" Content="Iniciar con Windows" />
-                        </UniformGrid>
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="14" />
+                                                    <TextBlock Text="{Binding Description}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11" />
+                                                </StackPanel>
 
-                        <Button Content="Guardar configuración" Command="{Binding SaveSettingsCommand}" HorizontalAlignment="Right" Width="220" />
-                    </StackPanel>
-                </ScrollViewer>
+                                                <CheckBox Grid.Column="1"
+                                                          Content="Usar"
+                                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                          VerticalAlignment="Center"
+                                                          Margin="16,0" />
+
+                                                <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Center">
+                                                    <TextBlock Text="Ganancia" />
+                                                    <Slider Minimum="0"
+                                                            Maximum="2"
+                                                            Value="{Binding Volume, Mode=TwoWay}"
+                                                            TickFrequency="0.1"
+                                                            IsSnapToTickEnabled="True" />
+                                                </StackPanel>
+
+                                                <ToggleButton Grid.Column="3"
+                                                              Content="Solo"
+                                                              IsChecked="{Binding IsSolo, Mode=TwoWay}"
+                                                              VerticalAlignment="Center" />
+
+                                                <ToggleButton Grid.Column="4"
+                                                              Content="Mute"
+                                                              IsChecked="{Binding IsMuted, Mode=TwoWay}"
+                                                              VerticalAlignment="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <!-- Transcripción y Minuta -->
+                        <StackPanel Grid.Row="2">
+                            <TextBlock Text="Transcripción" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding LastTranscription}"
+                                     IsReadOnly="True"
+                                     TextWrapping="Wrap"
+                                     Height="100"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto" />
+
+                            <TextBlock Text="Minuta" FontWeight="SemiBold" Margin="0,12,0,0" />
+                            <TextBox Text="{Binding LastSummary}"
+                                     IsReadOnly="True"
+                                     TextWrapping="Wrap"
+                                     Height="100"
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </TabItem>
+
+            <!-- TAB: Configuración -->
+            <TabItem Header="Configuración">
+                <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="16">
+                    <ScrollViewer>
+                        <StackPanel>
+                            <!-- API de transcripción -->
+                            <TextBlock Text="API de transcripción" FontWeight="SemiBold" FontSize="14" />
+                            <UniformGrid Columns="2" Margin="0,8,0,16" Rows="4">
+                                <Label Content="API Key Whisper" />
+                                <PasswordBox helpers:PasswordBoxAssistant.BindPassword="True"
+                                             helpers:PasswordBoxAssistant.BoundPassword="{Binding WhisperApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Label Content="Modelo" />
+                                <TextBox Text="{Binding WhisperModel, Mode=TwoWay}" />
+                                <Label Content="URL Base" />
+                                <TextBox Text="{Binding WhisperBaseUrl, Mode=TwoWay}" />
+                                <Label Content="Idioma (ISO)" />
+                                <TextBox Text="{Binding WhisperLanguage, Mode=TwoWay}" />
+                            </UniformGrid>
+
+                            <!-- Proveedor de resumen -->
+                            <TextBlock Text="Proveedor de resumen" FontWeight="SemiBold" FontSize="14" />
+                            <StackPanel Orientation="Vertical" Margin="0,8,0,16">
+                                <ComboBox ItemsSource="{Binding AvailableSummaryProviders}"
+                                          SelectedItem="{Binding SelectedSummaryProvider}" />
+                                <Label Content="API Key OpenAI" />
+                                <PasswordBox helpers:PasswordBoxAssistant.BindPassword="True"
+                                             helpers:PasswordBoxAssistant.BoundPassword="{Binding OpenAiApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Label Content="API Key Gemini" />
+                                <PasswordBox helpers:PasswordBoxAssistant.BindPassword="True"
+                                             helpers:PasswordBoxAssistant.BoundPassword="{Binding GeminiApiKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Label Content="Prompt base para minutas" />
+                                <TextBox Text="{Binding SummaryPromptTemplate, Mode=TwoWay}"
+                                         AcceptsReturn="True" Height="120" TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <!-- Google Drive -->
+                            <TextBlock Text="Google Drive" FontWeight="SemiBold" FontSize="14" />
+                            <UniformGrid Columns="2" Margin="0,8,0,16" Rows="2">
+                                <Label Content="Credenciales (client_secret.json)" />
+                                <TextBox Text="{Binding GoogleCredentialsPath, Mode=TwoWay}" />
+                                <Label Content="ID carpeta destino" />
+                                <TextBox Text="{Binding GoogleDriveFolderId, Mode=TwoWay}" />
+                            </UniformGrid>
+
+                            <!-- Hotkeys -->
+                            <TextBlock Text="Hotkeys" FontWeight="SemiBold" FontSize="14" />
+                            <UniformGrid Columns="2" Margin="0,8,0,16" Rows="2">
+                                <Label Content="Iniciar / detener" />
+                                <TextBox Text="{Binding HotkeyText, Mode=TwoWay}" />
+                                <Label Content="Escuchar en segundo plano" />
+                                <CheckBox IsChecked="{Binding RunOnStartup, Mode=TwoWay}" Content="Iniciar con Windows" />
+                            </UniformGrid>
+
+                            <Button Content="Guardar configuración"
+                                    Command="{Binding SaveSettingsCommand}"
+                                    HorizontalAlignment="Right"
+                                    Width="220" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
             </TabItem>
         </TabControl>
 
-        <TextBlock Grid.Row="2" Text="{Binding FooterMessage}" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Right" />
+        <!-- Pie -->
+        <TextBlock Grid.Row="2"
+                   Text="{Binding FooterMessage}"
+                   Foreground="{StaticResource TextSecondaryBrush}"
+                   HorizontalAlignment="Right" />
     </Grid>
 </Window>
